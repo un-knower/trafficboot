@@ -25,18 +25,8 @@ public class RJava {
             System.out.println("Cannot load R");
             return;
         }
+        lm(re);
 
-            REXP x;
-           // re.eval("data(iris)",false);
-            x=lm(re);
-                RVector rVector=x.asVector();
-
-        //System.out.println(x);
-
-      while (rVector.iterator().hasNext()){
-          String i= (String) rVector.iterator().next();
-          System.out.println(i);
-      }
     }
          public static REXP nnet(Rengine re){
              //神经网络
@@ -65,7 +55,7 @@ public class RJava {
              re.eval("library(\"nnet\")");
              re.eval("wuhuM1=lm(formula=y1~ lkld +dt +month + day +num +tianqi+nextWeek+ nextNum,data= wudata)");
              REXP x=re.eval("predict(wuhuM1,wudata[,0:9])");
-             re.eval("write.table (predict(wuhuMl,wudata[,0:9]), file =\"E://lm.csv\", sep =\" \", row.names =FALSE, col.names =TRUE, quote =TRUE)");
+             re.eval("write.table (predict(wuhuMl,wudata[,0:9]), file =\"E://ls.csv\", sep =\" \", row.names =FALSE, col.names =TRUE, quote =TRUE)");
              return x;
          }
 }
