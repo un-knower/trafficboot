@@ -39,7 +39,7 @@ public class DataController {
         //Rengine re = new Rengine(new String[] { "--vanilla" }, false, null);
         //Rengine re=new Rengine();
         //Rengine R引擎，通过它进行R语言的启动、运算、画图、关闭等功能。
-        //一个线程只能实例化一次，这里使用单里模式。
+        //一个线程只能实例化一次，这里使用单例模式。
         Rengine re=Singleton.getSingleton();
 
         if (!re.waitForR()) {
