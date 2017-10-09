@@ -4,11 +4,8 @@ import com.xzst.traffic.model.InputModel;
 import com.xzst.traffic.model.OutputModel;
 import com.xzst.traffic.model.Singleton;
 import com.xzst.traffic.service.DataCleanService;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,25 +36,34 @@ public class DataController {
     @RequestMapping(value="/dataTrain", method=RequestMethod.POST)
     @ResponseBody
     public String dataTrain(@RequestParam @ApiParam(required = true, value = "inputUrl") String inputUrl, @RequestParam @ApiParam(required = true, value = "outputUrl") String outputUrl){
-       // Rengine re = new Rengine(new String[] { "--vanilla" }, false, null);
-      //  Rengine re=new Rengine();
+        //Rengine re = new Rengine(new String[] { "--vanilla" }, false, null);
+        //Rengine re=new Rengine();
+        //Rengine R引擎，通过它进行R语言的启动、运算、画图、关闭等功能。
+        //一个线程只能实例化一次，这里使用单里模式。
         Rengine re=Singleton.getSingleton();
 
         if (!re.waitForR()) {
             System.out.println("Cannot load R");
-            return "R error";
+            return "R error：Cannot load R";
         }
         //打印变量
         String version = re.eval("R.version.string").asString();
         System.out.println(version);
-        re.eval("wudata=read.table(\"E:/wri.csv\",header=TRUE,sep=\",\",quote=\"\\\"\")");
-        //re.eval("wudata=read.table(\""+inputUrl+"\",header=TRUE,sep=\",\",quote=\"\\\"\")");
+       // re.eval("wudata=read.table(\"E:/wri.csv\",header=TRUE,sep=\",\",quote=\"\\\"\")");
+        re.eval("wudata=read.table(\""+inputUrl+"\",header=TRUE,sep=\",\",quote=\"\\\"\")");
         re.eval("library(\"nnet\")");
         re.eval("wuhuM1=lm(formula=y1~ lkld +dt +month + day +num +tianqi+nextWeek+ nextNum,data= wudata)");
         System.out.println(re.eval("predict(wuhuM1,wudata[,0:9])"));
-        re.eval("write.table (predict(wuhuM1,wudata[,0:9]), file =\"E://ls.csv\", sep =\" \", row.names =FALSE, col.names =TRUE, quote =TRUE)");
-        //re.eval("write.table(predict(wuhuM1,wudata[,0:9]), file =\""+outputUrl+"\", sep =\" \", row.names =FALSE, col.names =TRUE, quote =TRUE)");
+        //re.eval("write.table (predict(wuhuM1,wudata[,0:9]), file =\"E://ls.csv\", sep =\" \", row.names =FALSE, col.names =TRUE, quote =TRUE)");
+        re.eval("write.table(predict(wuhuM1,wudata[,0:9]), file =\""+outputUrl+"\", sep =\" \", row.names =FALSE, col.names =TRUE, quote =TRUE)");
 
+        return "success";
+    }
+    @ApiOperation(value="从hdfs下载", notes="从hdfs下载数据")
+    @RequestMapping(value="/copyToLocal", method=RequestMethod.POST)
+    @ResponseBody
+    public String copyToLocal(@RequestParam @ApiParam(required = true, value = "inputUrl") String inputUrl, @RequestParam @ApiParam(required = true, value = "outputUrl") String outputUrl){
+        dataCleanService.copyFromHdfs(inputUrl,outputUrl);
         return "success";
     }
 

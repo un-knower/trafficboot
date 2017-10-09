@@ -31,4 +31,11 @@ public interface DataCleanService {
      * @return  List<OutputModel>
      */
     String csvWriter(List<OutputModel> list,String outputUrl);
+    /**
+     * 从HDFS下载数据到本地
+     *
+     * @param hdfsUrl,localUrl
+     * @return  void
+     */
+    void copyFromHdfs(String hdfsUrl,String localUrl);
 }

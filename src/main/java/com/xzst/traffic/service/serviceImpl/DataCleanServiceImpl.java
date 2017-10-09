@@ -8,10 +8,13 @@ import com.xzst.traffic.model.OutputModel;
 import com.xzst.traffic.service.DataCleanService;
 import com.xzst.traffic.util.ConfUtil;
 import com.xzst.traffic.util.TimeUtil;
+import org.apache.hadoop.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -171,5 +174,26 @@ public class DataCleanServiceImpl implements DataCleanService {
             e.printStackTrace();
         }
         return flag;
+    }
+
+    @Override
+    public void copyFromHdfs(String hdfsUrl, String localUrl) {
+        try {
+            Configuration conf = new Configuration();
+            Path srcPath= new Path(hdfsUrl); // hdfs路径
+            FileSystem fs = srcPath.getFileSystem(conf);
+            fs.listFiles(srcPath,false);
+            Path dstPath = new Path(localUrl); // 本地存储文件路径
+            fs.copyToLocalFile(srcPath,dstPath);
+            InputStream in = fs.open(srcPath);
+            OutputStream out = new FileOutputStream("E://Demo");
+            IOUtils.copyBytes(in, out, 4096, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+
+
+
     }
 }
