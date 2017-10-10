@@ -17,6 +17,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -111,6 +112,33 @@ public class DataCleanServiceImpl implements DataCleanService {
             e.printStackTrace();
         }
         return list;
+    }
+
+    @Override
+    public Map resultReader(String url) {
+        Map map=new HashMap<>();
+        try {
+            // 创建CSV读对象
+            InputStreamReader isr=new InputStreamReader(new FileInputStream(url),"GBK");
+            CsvReader csvReader = new CsvReader(isr);
+            // 读表头
+            csvReader.readHeaders();
+            csvReader.getHeader(0);
+            int i=0;
+            while (csvReader.readRecord()){
+                ++i;
+                // 读一整行
+                // 读这行的某一列
+                // System.out.println(csvReader.get("Link"));
+
+                map.put(i,csvReader.get("x"));
+
+            }
+            isr.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return  map;
     }
 
     @Override

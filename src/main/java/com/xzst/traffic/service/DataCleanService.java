@@ -4,6 +4,7 @@ import com.xzst.traffic.model.InputModel;
 import com.xzst.traffic.model.OutputModel;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 张超 on 2017/9/30.
@@ -17,6 +18,13 @@ public interface DataCleanService {
      * @return  List<InputModel>
      */
      List<InputModel> csvReader(String inputUrl);
+
+    /**
+     * 读取预测结果返回map
+     * @param url
+     * @return
+     */
+     Map resultReader(String url);
     /**
      * 数据转换
      *
